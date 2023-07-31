@@ -268,6 +268,7 @@ local SaveManager = {} do
 		local section2 = tab:AddRightGroupbox('Cloud Configs')
 
 		section2:AddToggle('Show_Cloud_Configs', { Text = 'Show Cloud Configs' });
+		local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 		local Configs = game:GetService("HttpService"):JSONDecode(httprequest(
 			{Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'
