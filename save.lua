@@ -265,6 +265,40 @@ local SaveManager = {} do
 			SaveManager.AutoloadLabel:SetText('Current autoload config: ' .. name)
 		end
 
+		local section2 = tab:AddRightGroupbox('Cloud Configs')
+
+		section2:AddToggle('Show_Cloud_Configs', { Text = 'Show Cloud Configs' });
+
+		local Configs = game:GetService("HttpService"):JSONDecode(httprequest(
+			{Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'
+		}).Body)['Configs']
+
+		local CloudConfigs = section2:AddDependencyBox();
+
+		for i,v in ipairs(Configs) do 
+			CloudConfigs:AddButton({
+				Text = v.Name,
+				Callback = function()
+					local success, decoded = pcall(httpService.JSONDecode, httpService, v.Data)
+					if not success then return false, 'decode error' end
+			
+					for _, option in next, decoded.objects do
+						if self.Parser[option.type] then
+							task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
+						end
+					end
+				end,
+				DoubleClick = true,
+				Tooltip = 'By: '..v.Creator
+			})
+			game:GetService("RunService").Heartbeat:Wait()
+		end
+
+		CloudConfigs:SetupDependencies({
+			{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
+		});
+
+
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName' })
 	end
 
