@@ -328,7 +328,7 @@ local SaveManager = {} do
 		});
 
 
-		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName' })
+		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
 	end
 
 	SaveManager:BuildFolderTree()
