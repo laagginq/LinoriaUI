@@ -279,7 +279,7 @@ local SaveManager = {} do
 		for i,v in ipairs(Configs) do 
 			CloudConfigs:AddButton({
 				Text = v.Name,
-				Callback = function()
+				Func = function()
 					local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
 					if not success then return false, 'decode error' end
 			
