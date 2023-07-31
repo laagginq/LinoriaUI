@@ -279,7 +279,7 @@ local SaveManager = {} do
 			CloudConfigs:AddButton({
 				Text = v.Name,
 				Callback = function()
-					local success, decoded = pcall(httpService.JSONDecode, httpService, v.Data)
+					local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
 					if not success then return false, 'decode error' end
 			
 					for _, option in next, decoded.objects do
