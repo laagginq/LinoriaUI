@@ -304,6 +304,9 @@ local SaveManager = {} do
 
 		local CloudConfigs = section2:AddDependencyBox();
 
+		CloudConfigs:AddDropdown('CloudConfigList', { Text = 'Cloud Configs', Values = Configs, AllowNull = true })
+
+
 		for i,v in ipairs(Configs) do 
 			CloudConfigs:AddButton({
 				Text = v.Name,
