@@ -315,7 +315,7 @@ local SaveManager = {} do
 						end
 					end
 
-					self.Library:Notify(string.format('Loaded %q', v.Name))
+					self.Library:Notify(string.format('Loaded %q, Created by: %s', v.Name, v.Creator))
                 end,
             })
             game:GetService("RunService").Heartbeat:Wait()
