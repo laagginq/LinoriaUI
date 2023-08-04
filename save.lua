@@ -314,6 +314,8 @@ local SaveManager = {} do
 							task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
 						end
 					end
+
+					self.Library:Notify(string.format('Loaded %q', v.Name))
                 end,
             })
             game:GetService("RunService").Heartbeat:Wait()
