@@ -295,20 +295,18 @@ local SaveManager = {} do
 
 		local section2 = tab:AddRightGroupbox('Cloud Configs')
 
-		section2:AddToggle('Show_Cloud_Configs', { Text = 'Show Cloud Configs' });
-		local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+        local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+        local BrowserLIB = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/browser.lua"))()
+        local Configs = game:GetService("HttpService"):JSONDecode(httprequest({Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'}).Body)['Configs']
+        local Browser = BrowserLIB:Create(false)
 
-		local Configs = game:GetService("HttpService"):JSONDecode(httprequest(
-			{Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'
-		}).Body)['Configs']
-
-		local CloudConfigs = section2:AddDependencyBox();
-
-		for i,v in ipairs(Configs) do 
-			CloudConfigs:AddButton({
-				Text = v.Name,
-				Func = function()
-					local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
+        for i,v in ipairs(Configs) do 
+            Browser:Button({
+                Name = v.Name,
+                Creator = v.Creator,
+                Description = v.Description,
+                Callback = function()
+                    local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
 					if not success then return false, 'decode error' end
 			
 					for _, option in next, decoded.objects do
@@ -316,16 +314,22 @@ local SaveManager = {} do
 							task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
 						end
 					end
-				end,
-				DoubleClick = true,
-				Tooltip = 'By: '..v.Creator
-			})
-			game:GetService("RunService").Heartbeat:Wait()
-		end
+                end,
+            })
+            game:GetService("RunService").Heartbeat:Wait()
+        end
 
-		CloudConfigs:SetupDependencies({
-			{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
-		});
+
+
+        section2:AddToggle('Show_Cloud_Configs', {
+            Text = 'Show Cloud Configs',
+            Default = false,
+            Callback = function(V) 
+                Browser:ToggleBrowser(V)
+            end
+        })
+
+
 
 
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
