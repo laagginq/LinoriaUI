@@ -329,7 +329,14 @@ local SaveManager = {} do
             end
         })
 
+		local UploadConfig = section2:AddDependencyBox();
 
+		UploadConfig:AddLabel('How to Upload Cloud Config\n1. Create your settings\n2. Click copy config.\n3. Post it in #share-configs\n4. Include a name/short description',true)
+
+		UploadConfig:SetupDependencies({
+			{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
+		});
+		
 
 
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
