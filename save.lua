@@ -201,6 +201,10 @@ local SaveManager = {} do
 	function SaveManager:BuildConfigSection(tab)
 		assert(self.Library, 'Must set SaveManager.Library')
 
+		if not isfile(self.Folder .. "/settings/README.txt") then 
+			makefolder(self.Folder .. "/settings/README.txt","to load configs drag and drop JSON files here")
+		end
+
 		local section = tab:AddRightGroupbox('Configuration')
 
 		section:AddInput('SaveManager_ConfigName',    { Text = 'Config name' })
@@ -348,3 +352,4 @@ local SaveManager = {} do
 end
 
 return SaveManager
+
