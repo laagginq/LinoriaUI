@@ -202,7 +202,7 @@ local SaveManager = {} do
 		assert(self.Library, 'Must set SaveManager.Library')
 
 		if not isfile(self.Folder .. "/settings/README.txt") then 
-			makefolder(self.Folder .. "/settings/README.txt","to load configs drag and drop JSON files here")
+			writefile(self.Folder .. "/settings/README.txt","to load configs drag and drop JSON files here")
 		end
 
 		local section = tab:AddRightGroupbox('Configuration')
