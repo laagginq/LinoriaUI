@@ -198,7 +198,7 @@ local SaveManager = {} do
 	end
 
 
-	function SaveManager:BuildConfigSection(tab)
+	function SaveManager:BuildConfigSection(tab,disablecloudconfigs)
 		assert(self.Library, 'Must set SaveManager.Library')
 
 		if not isfile(self.Folder .. "/settings/README.txt") then 
@@ -296,54 +296,53 @@ local SaveManager = {} do
 			local name = readfile(self.Folder .. '/settings/autoload.txt')
 			SaveManager.AutoloadLabel:SetText('Current autoload config: ' .. name)
 		end
+		if not disablecloudconfigs then
+			local section2 = tab:AddRightGroupbox('Cloud Configs')
 
-		local section2 = tab:AddRightGroupbox('Cloud Configs')
+			local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+			local BrowserLIB = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/browser.lua"))()
+			local Configs = game:GetService("HttpService"):JSONDecode(httprequest({Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'}).Body)['Configs']
+			local Browser = BrowserLIB:Create(false)
 
-        local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
-        local BrowserLIB = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/browser.lua"))()
-        local Configs = game:GetService("HttpService"):JSONDecode(httprequest({Url = 'https://raw.githubusercontent.com/laagginq/Evolution/main/configs.json'}).Body)['Configs']
-        local Browser = BrowserLIB:Create(false)
-
-        for i,v in ipairs(Configs) do 
-            Browser:Button({
-                Name = v.Name,
-                Creator = v.Creator,
-                Description = v.Description,
-                Callback = function()
-                    local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
-					if not success then return false, 'decode error' end
-			
-					for _, option in next, decoded.objects do
-						if self.Parser[option.type] then
-							task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
+			for i,v in ipairs(Configs) do 
+				Browser:Button({
+					Name = v.Name,
+					Creator = v.Creator,
+					Description = v.Description,
+					Callback = function()
+						local success, decoded = pcall(httpService.JSONDecode, httpService, game:HttpGet(v.Link))
+						if not success then return false, 'decode error' end
+				
+						for _, option in next, decoded.objects do
+							if self.Parser[option.type] then
+								task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
+							end
 						end
-					end
 
-					self.Library:Notify(string.format('Loaded %q, Created by: %s', v.Name, v.Creator))
-                end,
-            })
-            game:GetService("RunService").Heartbeat:Wait()
-        end
-
+						self.Library:Notify(string.format('Loaded %q, Created by: %s', v.Name, v.Creator))
+					end,
+				})
+				game:GetService("RunService").Heartbeat:Wait()
+			end
 
 
-        section2:AddToggle('Show_Cloud_Configs', {
-            Text = 'Show Cloud Configs',
-            Default = false,
-            Callback = function(V) 
-                Browser:ToggleBrowser(V)
-            end
-        })
 
-		local UploadConfig = section2:AddDependencyBox();
+			section2:AddToggle('Show_Cloud_Configs', {
+				Text = 'Show Cloud Configs',
+				Default = false,
+				Callback = function(V) 
+					Browser:ToggleBrowser(V)
+				end
+			})
 
-		UploadConfig:AddLabel('How to Upload Cloud Config\n1. Create your settings\n2. Click copy config.\n3. Post it in #share-configs\n4. Include a name/short description',true)
+			local UploadConfig = section2:AddDependencyBox();
 
-		UploadConfig:SetupDependencies({
-			{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
-		});
-		
+			UploadConfig:AddLabel('How to Upload Cloud Config\n1. Create your settings\n2. Click copy config.\n3. Post it in #share-configs\n4. Include a name/short description',true)
 
+			UploadConfig:SetupDependencies({
+				{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
+			});
+		end
 
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
 	end
@@ -352,4 +351,3 @@ local SaveManager = {} do
 end
 
 return SaveManager
-
