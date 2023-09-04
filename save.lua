@@ -1,7 +1,7 @@
 local httpService = game:GetService('HttpService')
 
 local SaveManager = {} do
-	SaveManager.Folder = 'EvolutionSettings'
+	SaveManager.Folder = getgenv().settings_folder or "EvolutionSettings"
 	SaveManager.Ignore = {}
 	SaveManager.Parser = {
 		Toggle = {
