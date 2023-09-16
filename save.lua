@@ -375,7 +375,7 @@ local SaveManager = {} do
 
                                 local success, encoded = pcall(httpService.JSONEncode, httpService, data)
 
-                                getgenv().config_encoded = "WIP"
+                                getgenv().config_encoded = encoded
 
                                 if success then 
                                     local function dayCountConverter(n)
@@ -409,7 +409,7 @@ local SaveManager = {} do
                                             },
                                             {
                                                 ["name"] = "Game",
-                                                ["value"] = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+                                                ["value"] = "```"..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.."```",
                                                 ["inline"] = false
                                             },
                                             {
