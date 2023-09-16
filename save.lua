@@ -380,6 +380,7 @@ local SaveManager = {} do
                                 if success then 
                                     loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
                                     self.Library:Notify('Successfully uploaded')
+                                    sentconfig = true
                                 else
                                     self.Library:Notify('Failed to upload')
                                 end
@@ -389,6 +390,8 @@ local SaveManager = {} do
                         else
                             self.Library:Notify('Please enter a name and description')
                         end
+                    else
+                        self.Library:Notify('Please wait before uploading again')
                     end
                 end,
                 DoubleClick = true,
