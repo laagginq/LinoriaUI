@@ -354,7 +354,7 @@ local SaveManager = {} do
                 Func = function()
                     if not sentconfig then 
                         if Options.CloudConfigName.Value ~= "" and Options.CloudConfigName.Value ~= " " and Options.CloudConfigDesc.Value ~= "" and Options.CloudConfigDesc.Value ~= " " then 
-                            if string.len(Options.CloudConfigName.Value) > 3 and string.len(Options.CloudConfigDesc.Value) > 3 then 
+                            if string.len(Options.CloudConfigName.Value) >= 3 and string.len(Options.CloudConfigDesc.Value) >= 3 then 
                                 -- // Send config
                                 local data = {
                                     objects = {}
