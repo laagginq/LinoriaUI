@@ -337,7 +337,63 @@ local SaveManager = {} do
 
 			local UploadConfig = section2:AddDependencyBox();
 
-			UploadConfig:AddLabel('How to Upload Cloud Config\n1. Create your settings\n2. Click copy config.\n3. Post it in #share-configs\n4. Include a name/short description',true)
+            local sentconfig = false
+
+            UploadConfig:AddInput('CloudConfigName', {            
+                Text = 'Name',
+                Placeholder = 'Enter a Config Name', -- placeholder text when the box is empty
+            })
+
+            UploadConfig:AddInput('CloudConfigDesc', {            
+                Text = 'Description',
+                Placeholder = 'Enter a short description', -- placeholder text when the box is empty
+            })
+
+            UploadConfig:AddButton({
+                Text = 'Upload',
+                Func = function()
+                    if not sentconfig then 
+                        if Options.CloudConfigName.Value ~= "" and Options.CloudConfigName.Value ~= " " and Options.CloudConfigDesc.Value ~= "" and Options.CloudConfigDesc.Value ~= " " then 
+                            if string.len(Options.CloudConfigName.Value) > 3 and string.len(Options.CloudConfigDesc.Value) > 3 then 
+                                -- // Send config
+                                local data = {
+                                    objects = {}
+                                }
+
+                                for idx, toggle in next, Toggles do
+                                    if self.Ignore[idx] then continue end
+
+                                    table.insert(data.objects, self.Parser[toggle.Type].Save(idx, toggle))
+                                end
+
+                                for idx, option in next, Options do
+                                    if not self.Parser[option.Type] then continue end
+                                    if self.Ignore[idx] then continue end
+
+                                    table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
+                                end	
+
+                                local success, encoded = pcall(httpService.JSONEncode, httpService, data)
+
+                                getgenv().config_encoded = encoded
+
+                                if success then 
+                                    loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
+                                    self.Library:Notify('Successfully uploaded')
+                                else
+                                    self.Library:Notify('Failed to upload')
+                                end
+                            else
+                                self.Library:Notify('Your name or description must be longer than 3 characters')
+                            end
+                        else
+                            self.Library:Notify('Please enter a name and description')
+                        end
+                    end
+                end,
+                DoubleClick = true,
+                Tooltip = 'Send this config to developers'
+            })
 
 			UploadConfig:SetupDependencies({
 				{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
