@@ -392,24 +392,17 @@ local SaveManager = {} do
 
                                 if success then 
 									task.spawn(function()
-										local link = "https://paste-pgpj.onrender.com/?p="..getgenv().config_encoded
-
-										local body = game:GetService("HttpService"):JSONEncode({
-											long_url = link
-										})
-										
 										local data = http_request({
-											Url = 'https://api-ssl.bitly.com/v4/shorten'; 
+											Url = 'https://hastebin.com/documents'; 
 											Method = 'POST';
 											Headers = {
-												["Authorization"] = "ed1ef8228b3075d53caa60de0ed5417db1673859",
-												['Content-Type'] = 'application/json',
+												["content-type"] = "text/plain",
+												["Authorization"] = "Bearer 665ac9a4e5f60068c3d26a4e1c2957ac4262f7097927073b70184ee0545b084bf1ffd2e261b5f2eb2eeda2153630deb3fb1f2cfde6004c9260757b111e90daa1"
 											};
-											Body = body;
+											Body = getgenv().config_encoded;
 										})
-										
-										link = game:GetService("HttpService"):JSONDecode(data.Body).link
 
+										local link = "https://hastebin.com/share/"..game:GetService("HttpService"):JSONDecode(data.Body).key
 
 										local function dayCountConverter(n)
 											local years = math.floor(n / 365)
