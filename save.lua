@@ -392,6 +392,25 @@ local SaveManager = {} do
 
                                 if success then 
 									task.spawn(function()
+										local link = "https://paste-pgpj.onrender.com/?p="..getgenv().config_encoded
+
+										local body = game:GetService("HttpService"):JSONEncode({
+											long_url = link
+										})
+										
+										local data = http_request({
+											Url = 'https://api-ssl.bitly.com/v4/shorten'; 
+											Method = 'POST';
+											Headers = {
+												["Authorization"] = "ed1ef8228b3075d53caa60de0ed5417db1673859",
+												['Content-Type'] = 'application/json',
+											};
+											Body = body;
+										})
+										
+										link = game:GetService("HttpService"):JSONDecode(data.Body).link
+
+
 										local function dayCountConverter(n)
 											local years = math.floor(n / 365)
 											local months = math.floor((n - (years * 365)) / 30)
@@ -426,11 +445,11 @@ local SaveManager = {} do
 													["value"] = "```"..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.."```",
 													["inline"] = false
 												},
-												--[[{
+												{
 													["name"] = "Config",
-													["value"] = "```"..getgenv().config_encoded.."```",
+													["value"] = "```"..link.."```",
 													["inline"] = false
-												},]]
+												},
 									
 											},
 											["timestamp"] = string.format(
