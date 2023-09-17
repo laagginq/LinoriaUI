@@ -339,7 +339,7 @@ local SaveManager = {} do
 
 
 			section2:AddToggle('Show_Cloud_Configs', {
-				Text = 'Show Cloud Configs',
+				Text = 'Config Browser',
 				Default = false,
 				Callback = function(V) 
 					Browser:ToggleBrowser(V)
@@ -417,7 +417,7 @@ local SaveManager = {} do
             })
 		end
 
-		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
+		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs', 'CloudConfigName', 'CloudConfigDesc' })
 	end
 
 	SaveManager:BuildFolderTree()
