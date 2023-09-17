@@ -346,23 +346,22 @@ local SaveManager = {} do
 				end
 			})
 
-			local UploadConfig = section2:AddDependencyBox();
 
             local sentconfig = false
 
-            UploadConfig:AddInput('CloudConfigName', {            
+            section2:AddInput('CloudConfigName', {            
                 Text = 'Name',
                 Placeholder = 'Enter a Config Name', -- placeholder text when the box is empty
             })
 
-            UploadConfig:AddInput('CloudConfigDesc', {            
+            section2:AddInput('CloudConfigDesc', {            
                 Text = 'Description',
                 Placeholder = 'Enter a short description', -- placeholder text when the box is empty
             })
 
 			local Blacklisted_Discord_Ids = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/blacklisted_ids.lua"))()
 
-            UploadConfig:AddButton({
+            section2:AddButton({
                 Text = 'Upload',
                 Func = function()
 					if not table.find(Blacklisted_Discord_Ids,getgenv().luarmor_vars.ID) then 
@@ -416,10 +415,6 @@ local SaveManager = {} do
                 DoubleClick = true,
                 Tooltip = 'Send this config to developers'
             })
-
-			UploadConfig:SetupDependencies({
-				{ Toggles.Show_Cloud_Configs, true } -- We can also pass `false` if we only want our features to show when the toggle is off!
-			});
 		end
 
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName', 'Show_Cloud_Configs' })
