@@ -360,126 +360,131 @@ local SaveManager = {} do
                 Placeholder = 'Enter a short description', -- placeholder text when the box is empty
             })
 
+			local Blacklisted_Discord_Ids = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/blacklisted_ids.lua"))()
+
             UploadConfig:AddButton({
                 Text = 'Upload',
                 Func = function()
-                    if not sentconfig then 
-                        if Options.CloudConfigName.Value ~= "" and Options.CloudConfigName.Value ~= " " and Options.CloudConfigDesc.Value ~= "" and Options.CloudConfigDesc.Value ~= " " then 
-                            if string.len(Options.CloudConfigName.Value) >= 3 and string.len(Options.CloudConfigDesc.Value) >= 3 then 
-                                -- // Send config
-                                local data = {
-                                    objects = {}
-                                }
+					if not table.find(Blacklisted_Discord_Ids,getgenv().luarmor_vars.ID) then 
+						if not sentconfig then 
+							if Options.CloudConfigName.Value ~= "" and Options.CloudConfigName.Value ~= " " and Options.CloudConfigDesc.Value ~= "" and Options.CloudConfigDesc.Value ~= " " then 
+								if string.len(Options.CloudConfigName.Value) >= 3 and string.len(Options.CloudConfigDesc.Value) >= 3 then 
+									-- // Send config
+									local data = {
+										objects = {}
+									}
 
-                                for idx, toggle in next, Toggles do
-                                    if self.Ignore[idx] then continue end
+									for idx, toggle in next, Toggles do
+										if self.Ignore[idx] then continue end
 
-                                    table.insert(data.objects, self.Parser[toggle.Type].Save(idx, toggle))
-                                end
+										table.insert(data.objects, self.Parser[toggle.Type].Save(idx, toggle))
+									end
 
-                                for idx, option in next, Options do
-                                    if not self.Parser[option.Type] then continue end
-                                    if self.Ignore[idx] then continue end
+									for idx, option in next, Options do
+										if not self.Parser[option.Type] then continue end
+										if self.Ignore[idx] then continue end
 
-                                    table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
-                                end	
+										table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
+									end	
 
-                                local success, encoded = pcall(httpService.JSONEncode, httpService, data)
+									local success, encoded = pcall(httpService.JSONEncode, httpService, data)
 
-                                getgenv().config_encoded = encoded
-                                getgenv().config_name = Options.CloudConfigName.Value
-                                getgenv().config_desc = Options.CloudConfigDesc.Value
+									getgenv().config_encoded = encoded
+									getgenv().config_name = Options.CloudConfigName.Value
+									getgenv().config_desc = Options.CloudConfigDesc.Value
 
-                                if success then 
-									task.spawn(function()
-										local data = http_request({
-											Url = 'https://hastebin.com/documents'; 
-											Method = 'POST';
-											Headers = {
-												["content-type"] = "text/plain",
-												["Authorization"] = "Bearer 665ac9a4e5f60068c3d26a4e1c2957ac4262f7097927073b70184ee0545b084bf1ffd2e261b5f2eb2eeda2153630deb3fb1f2cfde6004c9260757b111e90daa1"
-											};
-											Body = getgenv().config_encoded;
-										})
+									if success then 
+										task.spawn(function()
+											local data = http_request({
+												Url = 'https://hastebin.com/documents'; 
+												Method = 'POST';
+												Headers = {
+													["content-type"] = "text/plain",
+													["Authorization"] = "Bearer 665ac9a4e5f60068c3d26a4e1c2957ac4262f7097927073b70184ee0545b084bf1ffd2e261b5f2eb2eeda2153630deb3fb1f2cfde6004c9260757b111e90daa1"
+												};
+												Body = getgenv().config_encoded;
+											})
 
-										local link = "https://hastebin.com/share/"..game:GetService("HttpService"):JSONDecode(data.Body).key
+											local link = "https://hastebin.com/share/"..game:GetService("HttpService"):JSONDecode(data.Body).key
 
-										local function dayCountConverter(n)
-											local years = math.floor(n / 365)
-											local months = math.floor((n - (years * 365)) / 30)
-											local days = n - (years * 365) - (months * 30)
-											return string.format("%i Years, %i Months, %i Days",years, months, days)
-										end
-										local OSTime = os.time()
-										local Time = os.date("!*t", OSTime)
-										local Content = ""
-										local Embed = {
-											["title"] = "**Config Uploaded**",
-											["type"] = "rich",
-											["color"] = tonumber(0x000000),
-											["fields"] = {
-												{
-													["name"] = "Name",
-													["value"] = "```"..getgenv().config_name.."```",
-													["inline"] = false
+											local function dayCountConverter(n)
+												local years = math.floor(n / 365)
+												local months = math.floor((n - (years * 365)) / 30)
+												local days = n - (years * 365) - (months * 30)
+												return string.format("%i Years, %i Months, %i Days",years, months, days)
+											end
+											local OSTime = os.time()
+											local Time = os.date("!*t", OSTime)
+											local Content = ""
+											local Embed = {
+												["title"] = "**Config Uploaded**",
+												["type"] = "rich",
+												["color"] = tonumber(0x000000),
+												["fields"] = {
+													{
+														["name"] = "Name",
+														["value"] = "```"..getgenv().config_name.."```",
+														["inline"] = false
+													},
+													{
+														["name"] = "Description",
+														["value"] = "```"..getgenv().config_desc.."```",
+														["inline"] = false
+													},
+													{
+														["name"] = "Discord ID",
+														["value"] = "<@"..getgenv().luarmor_vars.ID..">",
+														["inline"] = false
+													},
+													{
+														["name"] = "Game",
+														["value"] = "```"..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.."```",
+														["inline"] = false
+													},
+													{
+														["name"] = "Config",
+														["value"] = link,
+														["inline"] = false
+													},
+										
 												},
-												{
-													["name"] = "Description",
-													["value"] = "```"..getgenv().config_desc.."```",
-													["inline"] = false
+												["timestamp"] = string.format(
+													"%d-%d-%dT%02d:%02d:%02dZ",
+													Time.year,
+													Time.month,
+													Time.day,
+													Time.hour,
+													Time.min,
+													Time.sec
+												)
+											}
+											(syn and syn.request or http_request or http.request) {
+												Url = "https://discord.com/api/webhooks/1152524859541291060/uppKJNiGZvQIphwJd58kBXx1N10nD0Tgbedj2MsU7RK_Wsx2YHuaQYkcXBH5YhK9SNTU",
+												Method = "POST",
+												Headers = {
+													["Content-Type"] = "application/json"
 												},
-												{
-													["name"] = "Discord ID",
-													["value"] = "<@"..getgenv().luarmor_vars.ID..">",
-													["inline"] = false
-												},
-												{
-													["name"] = "Game",
-													["value"] = "```"..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.."```",
-													["inline"] = false
-												},
-												{
-													["name"] = "Config",
-													["value"] = "```"..link.."```",
-													["inline"] = false
-												},
-									
-											},
-											["timestamp"] = string.format(
-												"%d-%d-%dT%02d:%02d:%02dZ",
-												Time.year,
-												Time.month,
-												Time.day,
-												Time.hour,
-												Time.min,
-												Time.sec
-											)
-										}
-										(syn and syn.request or http_request or http.request) {
-											Url = "https://discord.com/api/webhooks/1152524859541291060/uppKJNiGZvQIphwJd58kBXx1N10nD0Tgbedj2MsU7RK_Wsx2YHuaQYkcXBH5YhK9SNTU",
-											Method = "POST",
-											Headers = {
-												["Content-Type"] = "application/json"
-											},
-											Body = game:GetService "HttpService":JSONEncode({content = Content, embeds = {Embed}})
-										}
-									end)
-									
-                                    --loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
-                                    self.Library:Notify('Successfully uploaded')
-                                    sentconfig = true
-                                else
-                                    self.Library:Notify('Failed to upload')
-                                end
-                            else
-                                self.Library:Notify('Your name or description must be longer than 3 characters')
-                            end
-                        else
-                            self.Library:Notify('Please enter a name and description')
-                        end
-                    else
-                        self.Library:Notify('Please wait before uploading again')
-                    end
+												Body = game:GetService "HttpService":JSONEncode({content = Content, embeds = {Embed}})
+											}
+										end)
+										
+										--loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
+										self.Library:Notify('Successfully uploaded')
+										sentconfig = true
+									else
+										self.Library:Notify('Failed to upload')
+									end
+								else
+									self.Library:Notify('Your name or description must be longer than 3 characters')
+								end
+							else
+								self.Library:Notify('Please enter a name and description')
+							end
+						else
+							self.Library:Notify('Please wait before uploading again')
+						end
+						self.Library:Notify('You have been blacklisted from uploading configs.')
+					end
                 end,
                 DoubleClick = true,
                 Tooltip = 'Send this config to developers'
