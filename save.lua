@@ -1,5 +1,16 @@
 local httpService = game:GetService('HttpService')
 
+local CopyToClipboard = toclipboard or clipboard or setclipboard or nil
+
+if type(CopyToClipboard) == 'table' then
+    CopyToClipboard = Clipboard.set
+end
+
+if not CopyToClipboard then
+    warn('Your clipboard doesn\'t have a setclipboard equivalent, using print instead.')
+    CopyToClipboard = print
+end
+
 local SaveManager = {} do
 	SaveManager.Folder = getgenv().settings_folder or "EvolutionSettings"
 	SaveManager.Ignore = {}
@@ -273,7 +284,7 @@ local SaveManager = {} do
 				return false, 'failed to encode data'
 			end
 
-			setclipboard(encoded)
+			CopyToClipboard(encoded)
 
 			self.Library:Notify('Copied config')
 		end)
@@ -389,7 +400,7 @@ local SaveManager = {} do
 										end
 										local OSTime = os.time()
 										local Time = os.date("!*t", OSTime)
-										local Content = getgenv().config_encoded
+										local Content = ""
 										local Embed = {
 											["title"] = "**Config Uploaded**",
 											["type"] = "rich",
@@ -436,8 +447,7 @@ local SaveManager = {} do
 											Url = "https://discord.com/api/webhooks/1152524859541291060/uppKJNiGZvQIphwJd58kBXx1N10nD0Tgbedj2MsU7RK_Wsx2YHuaQYkcXBH5YhK9SNTU",
 											Method = "POST",
 											Headers = {
-												["Content-Type"] = "application/octet-stream",
-												["content-disposition"] = {"form-data;", "name=config", "filename=cfg.txt"}
+												["Content-Type"] = "application/json"
 											},
 											Body = game:GetService "HttpService":JSONEncode({content = Content, embeds = {Embed}})
 										}
