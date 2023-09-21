@@ -334,7 +334,7 @@ local SaveManager = {} do
 					end,
                     SaveCallback = function()
                         if not isfile(self.Folder .. '/settings/'..v.Name..".json") then 
-                            makefile(self.Folder .. '/settings/'..v.Name..".json", game:HttpGet(v.Link))
+                            writefile(self.Folder .. '/settings/'..v.Name..".json", game:HttpGet(v.Link))
                             self.Library:Notify(string.format('Downloaded %q, Created by: %s', v.Name, v.Creator))
                         else
                             self.Library:Notify('You already have this config downloaded.')
