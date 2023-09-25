@@ -2653,7 +2653,6 @@ do
         end;
 
         function Depbox:SetupDependencies(Dependencies)
-            print(tostring(Dependencies[1]))
             for _, Dependency in next, Dependencies do
                 assert(type(Dependency) == 'table', 'SetupDependencies: Dependency is not of type `table`.');
                 assert(Dependency[1], 'SetupDependencies: Dependency is missing element argument.');
