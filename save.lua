@@ -312,6 +312,8 @@ local SaveManager = {} do
                   if not isfile(file) then 
                      writefile(self.Folder .. '/settings/' .. v.Name .. '.json',game:HttpGet(v.Link))
                      self.Library:Notify(string.format('Downloaded %q, Created by: %s', v.Name, v.Creator))
+                     Options.SaveManager_ConfigList:SetValues(self:RefreshConfigList())
+                     Options.SaveManager_ConfigList:SetValue(v.Name)
                   else
                      self.Library:Notify("You already have this config downloaded.")
                   end
