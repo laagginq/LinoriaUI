@@ -263,33 +263,6 @@ local SaveManager = {} do
 			self.Library:Notify(string.format('Overwrote config %q', name))
 		end)
 
-		section:AddButton('Copy config', function()
-			local data = {
-				objects = {}
-			}
-	
-			for idx, toggle in next, Toggles do
-				if self.Ignore[idx] then continue end
-	
-				table.insert(data.objects, self.Parser[toggle.Type].Save(idx, toggle))
-			end
-	
-			for idx, option in next, Options do
-				if not self.Parser[option.Type] then continue end
-				if self.Ignore[idx] then continue end
-	
-				table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
-			end	
-	
-			local success, encoded = pcall(httpService.JSONEncode, httpService, data)
-			if not success then
-				return false, 'failed to encode data'
-			end
-
-			CopyToClipboard(encoded)
-
-			self.Library:Notify('Copied config')
-		end)
 
 		section:AddButton('Refresh list', function()
 			Options.SaveManager_ConfigList:SetValues(self:RefreshConfigList())
@@ -334,6 +307,15 @@ local SaveManager = {} do
 
 						self.Library:Notify(string.format('Loaded %q, Created by: %s', v.Name, v.Creator))
 					end,
+               SaveCallback = function()
+                  local file = self.Folder .. '/settings/' .. v.Name .. '.json'
+                  if not isfile(file) then 
+                     writefile(self.Folder .. '/settings/' .. v.Name .. '.json',game:HttpGet(v.Link))
+                     self.Library:Notify(string.format('Downloaded %q, Created by: %s', v.Name, v.Creator))
+                  else
+                     self.Library:Notify("You already have this config downloaded.")
+                  end
+               end,
 				})
 				game:GetService("RunService").Heartbeat:Wait()
 			end
