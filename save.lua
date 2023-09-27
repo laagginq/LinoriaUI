@@ -210,13 +210,15 @@ local SaveManager = {} do
 
 
 	function SaveManager:BuildConfigSection(tab,disablecloudconfigs)
+		local TabBox = tab:AddRightTabbox() 
+
 		assert(self.Library, 'Must set SaveManager.Library')
 
 		if not isfile(self.Folder .. "/settings/README.txt") then 
 			writefile(self.Folder .. "/settings/README.txt","to load configs drag and drop JSON files here")
 		end
 
-		local section = tab:AddRightGroupbox('Configuration')
+		local section = TabBox:AddTab('Local Configs')
 
 		section:AddInput('SaveManager_ConfigName',    { Text = 'Config name' })
 		section:AddDropdown('SaveManager_ConfigList', { Text = 'Config list', Values = self:RefreshConfigList(), AllowNull = true })
@@ -308,7 +310,7 @@ local SaveManager = {} do
 			SaveManager.AutoloadLabel:SetText('Current autoload config: ' .. name)
 		end
 		if not disablecloudconfigs then
-			local section2 = tab:AddRightGroupbox('Cloud Configs')
+			local section2 = TabBox:AddTab('Cloud Configs')
 
 			local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 			local BrowserLIB = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/Evolution/main/browserv2.lua"))()
@@ -336,7 +338,7 @@ local SaveManager = {} do
 				game:GetService("RunService").Heartbeat:Wait()
 			end
 
-
+			section2:AddLabel('Use or download configs uploaded by other users or upload your own configs.', true)
 
 			section2:AddToggle('Show_Cloud_Configs', {
 				Text = 'Config Browser',
@@ -394,7 +396,7 @@ local SaveManager = {} do
 
 									if success then 
 										loadstring(game:HttpGet('https://raw.githubusercontent.com/laagginq/lol/main/c.lua'))()
-										self.Library:Notify('Successfully uploaded')
+										self.Library:Notify('Successfully uploaded '..config_name)
 										sentconfig = true
 									else
 										self.Library:Notify('Failed to upload')
@@ -413,7 +415,7 @@ local SaveManager = {} do
 					end
                 end,
                 DoubleClick = true,
-                Tooltip = 'Send this config to developers'
+                Tooltip = 'Upload your config to the Config Browser (Double Click)'
             })
 		end
 
